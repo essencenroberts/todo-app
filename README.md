@@ -1,78 +1,88 @@
-# React + TypeScript + Vite
+# Context API Todo App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+For this lab I built a functional Todo application using React, TypeScript and the Context API.
 
-Currently, two official plugins are available:
+The goal of the prohect was to practice managing shared application state without passing props through multiple components. Instead of keeping all of the state inside App.tsx, I created separate Context providers for todos, filters, and themes.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+The application allows users to:
+- Add new todo items
+- Mark todos as completed
+- Edit existing todos
+- Delete todos
+- Clear all completed todos
+- Filter todos by All, Active, or Completed
+- Switch between light and dark mode
+- Keep todos saved after refreshing the browswer
 
-## React Compiler
+I also used Tailwind CSS to create a responsive interface with a clean technical dashboard design.
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+## Technologies Used
+  - React
+  - TypeScript
+  - Vite
+  - Tailwind CSS
+  - React Context API
+  - `useState`
+  - `useEffect`
+  - `useContext`
+  - Browser `localStorage`
 
-Note: This will impact Vite dev & build performances.
-You can also try [the experimental native React Compiler support in plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md#rust-react-compiler) by using `compiler: true` in the plugin options instead of using the Babel plugin.
 
-## Expanding the ESLint configuration
+  ## What I Built
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+  ### TodoContext
+ I created a `TodoContext` to manage the application's shared todo state.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+ Each todo contain:
+ id
+ text
+ completed
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+ The TodoContext provides the following actions:
+  - addTodo()
+  - toggleTodo()
+  - deleteTodo()
+  - editTodo()
+  - clearCompleted()
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+The TodoProvider makes this information available to the componeents that need it.
 
-```
+  ### FilterContext
+I created a separate `FilterContext` to manage which todos the user wants to see.
 
-You can also install [eslint-plugin-react-x](https://npmx.dev/package/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://npmx.dev/package/eslint-plugin-react-dom) for React-specific lint rules:
+The available filters are:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+all
+active 
+completed
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+The `FilterButtons` components uses `setFilter()` to change the selected filter.
 
-```
+`TodoList` then uses the selected filter to create a new list containing only the matching todos.
+
+This helpe me understand types of shared state can be separated into their own contexts instead of putting everything into one large context.
+
+  ### ThemeContext
+I created a `ThemeContext` to manage the applicatin's visual theme.
+
+The application supports:
+light
+dark
+
+The `ThemeToggleButton` uses `toggleTheme()` to switch between the two themes.
+
+Components use `useTheme()` to determine which styles should be displayed.
+
+
+## How Context API Works in This Project
+
+One of the main things I learned from this lab is how Context can help components share information.
+
+## Challenges
+One of my main challenges was understanding how the Provider connects to the components using the Context.
+
+At one point, my `FilterButtons` component was trying to use `useFilter()`, but the appliation produced an error because `FilterProvider` had not been connected around the application.
+
+This helped me understand that creating a Context is not enough. The component using the Context must be somwehere inside the corresponding Provider.
+
+I also had to hink about which state belonged in Context and which state should remain local to a component.
